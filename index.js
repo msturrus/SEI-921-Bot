@@ -41,11 +41,11 @@ bot.on('message', msg => {
       msg.reply(fight.heal(msg.author.username, msg.mentions.users.array()[0].username))
     } 
   } else if (msg.content.startsWith('!rps')) {
-      if (msg.content.contains('rock')) {
+      if (msg.content.includes('rock')) {
         msg.reply('I choose paper.  I win')
-      } else if (msg.content.contains('paper')) {
+      } else if (msg.content.includes('paper')) {
         msg.reply('I choose scissors.  I win')
-      } else if (msg.content.contains('scissors')) {
+      } else if (msg.content.includes('scissors')) {
         msg.reply('I choose rock.  I win')
       }
   }
