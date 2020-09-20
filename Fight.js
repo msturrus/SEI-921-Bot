@@ -14,17 +14,17 @@ class Fight {
     }
 
     attack (attacker, defender) {
-        const defender = this.participants.find(participant => participant.name === defender)
+        const def = this.participants.find(participant => participant.name === defender)
         const damage = Math.floor(Math.random() * 10)
-        defender.hp -= damage
-        return `${attacker} attacks ${defender} for ${damage} damage!  ${defender} has ${defender.hp} hp left!`
+        def.hp -= damage
+        return `${attacker} attacks ${defender} for ${damage} damage!  ${defender} has ${def.hp} hp left!`
     }
 
     heal (healer, heelee) {
-        const heelee = this.participants.find(participant => participant.name === heelee)
+        const defender = this.participants.find(participant => participant.name === heelee)
         const damage = Math.floor(Math.random() * 5)
         defender.hp += damage
-        return `${healer} heals ${heelee} for ${damage} damage!  ${heelee} has ${heelee.hp} hp now!`
+        return `${healer} heals ${heelee} for ${damage} damage!  ${heelee} has ${defender.hp} hp now!`
     }
 
     getStatus() {

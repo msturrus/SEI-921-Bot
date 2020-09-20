@@ -14,14 +14,15 @@ bot.on('ready', () => {
 
 bot.on('message', msg => {
   console.log(msg.author.username)
-  console.log(msg.mentions.members.array())
+  console.log(msg.mentions.users.array())
   if (msg.content === 'ping') {
     msg.reply('pong');
     msg.channel.send('pong');
 
   } else if (msg.content.startsWith('!fight')) {
     if (msg.mentions.users.size) {
-      msg.mentions.users.forEach(user => fight.addParticipant(msg.author.username))
+      fight.addParticipant(msg.author.username)
+      msg.mentions.users.array().forEach(user => fight.addParticipant(user.username))
       const taggedUser = msg.mentions.users.first();
       msg.channel.send(`People have joined the fight arena! ${fight.getStatus()}`);
     } else {
@@ -31,13 +32,13 @@ bot.on('message', msg => {
       if (msg.mentions.users.size > 1) {
         msg.reply('You can only attack one user at a time.')
       } else {
-        msg.reply(fight.attack(msg.author.username, msg.mentions.users[0].username))
+        msg.reply(fight.attack(msg.author.username, msg.mentions.users.array()[0].username))
       }
   } else if (msg.content.startsWith('!heal')) {
     if (msg.mentions.users.size > 1) {
       msg.reply('You can only heal one user at a time.')
     } else {
-      msg.reply(fight.heal(msg.author.username, msg.mentions.users[0].username))
+      msg.reply(fight.heal(msg.author.username, msg.mentions.users.array()[0].username))
     }
 }
 });
