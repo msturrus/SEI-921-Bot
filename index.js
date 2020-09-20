@@ -1,6 +1,6 @@
 require('dotenv').config();
 const Discord = require('discord.js');
-const Fight = require ('/fight');
+const Fight = require ('./Fight').fight;
 const bot = new Discord.Client();
 const TOKEN = process.env.TOKEN;
 

@@ -1,5 +1,5 @@
 {
-  "name": "SEI 921 Bot",
+  "name": "fightbot",
   "version": "0.1.0",
   "description": "Discord bot for SEI 921",
   "main": "index.js",
