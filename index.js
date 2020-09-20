@@ -29,13 +29,13 @@ bot.on('message', msg => {
       msg.reply('Please tag a valid user!');
     }
   } else if (msg.content.startsWith('!attack')) {
-      if (msg.mentions.users.size > 1) {
+      if (msg.mentions.users.size !== 1) {
         msg.reply('You can only attack one user at a time.')
       } else {
         msg.reply(fight.attack(msg.author.username, msg.mentions.users.array()[0].username))
       }
   } else if (msg.content.startsWith('!heal')) {
-    if (msg.mentions.users.size > 1) {
+    if (msg.mentions.users.size !== 1) {
       msg.reply('You can only heal one user at a time.')
     } else {
       msg.reply(fight.heal(msg.author.username, msg.mentions.users.array()[0].username))
