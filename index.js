@@ -48,5 +48,11 @@ bot.on('message', msg => {
       } else if (msg.content.includes('scissors')) {
         msg.reply('I choose rock.  I win')
       }
+  } else if (msg.content.startsWith('!eval') {
+    try {
+      msg.reply(eval(msg.contents))
+    } catch (e) {
+      msg.reply(e)
+    }
   }
 });
