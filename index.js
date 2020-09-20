@@ -22,7 +22,7 @@ bot.on('message', msg => {
     if (msg.mentions.users.size) {
       msg.mentions.users.forEach(user => fight.add(user.username))
       const taggedUser = msg.mentions.users.first();
-      msg.channel.send(`People have joined the fight arena! ${fight.status()}`);
+      msg.channel.send(`People have joined the fight arena! ${fight.getStatus()}`);
     } else {
       msg.reply('Please tag a valid user!');
     }
@@ -32,5 +32,11 @@ bot.on('message', msg => {
       } else {
         msg.reply(fight.attack(msg.sender.username, msg.mentions.users[0].username))
       }
-  }
+  } else if (msg.content.startsWith('!heal')) {
+    if (msg.mentions.users.size > 1) {
+      msg.reply('You can only heal one user at a time.')
+    } else {
+      msg.reply(fight.heal(msg.sender.username, msg.mentions.users[0].username))
+    }
+}
 });
