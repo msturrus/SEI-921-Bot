@@ -1,16 +1,19 @@
 class Fight {
-    constructor(participants, id) {
+    constructor(names, id) {
         this.id = id
-        this.participants = participants;
+        this.participants = names.map(name => new Participant(name));
     }
 
     addParticipant(name) {
+        if (this.participants.find(participant => participant.name === name)) {
+            return `${name} is already in the fight!`
+        }
         const newcomer = new Participant(name)
         this.participants.push(newcomer);
         return `{newcomer.name} has joined the fight!`
     }
 
-    attack(attacker, defender) {
+    attack (attacker, defender) {
         const defender = this.participants.find(participant => participant.name === defender)
         const damage = Math.floor(Math.random() * 10)
         defender.hp -= damage
@@ -25,7 +28,7 @@ class Fight {
     }
 
     getStatus() {
-        return participants.map(participant => `${participant.name} is involved, and has ${participant.hp} hit points left`).toString();
+        return this.participants.map(participant => `${participant.name} is involved, and has ${participant.hp} hit points left`).toString();
     }
 }
 
