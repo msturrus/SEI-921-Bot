@@ -29,6 +29,16 @@ bot.on('message', msg => {
       } else {
         msg.reply('Please tag a valid user!');
       }
+    } else if (msg.content.startsWith('?cat')) {
+        console.log(msg.content)
+        msg.channel.send(`*woof! woof!*`);
+    } else if (msg.content.startsWith('!getcat')) {
+        msg.channel.send('*looks for cat*')
+        msg.channel.send('?cat')
+    } else if (msg.content.startsWith('?')) {
+        if (Math.random() > .9) {
+          msg.channel.send(`*grows jealous of Dyno*`);
+        }
     } else if (msg.content.startsWith('!attack')) {
         if (msg.mentions.users.size > 1 || !msg.mentions.users.array()[0].username) {
           msg.reply('You can only attack one user at a time.')
@@ -57,6 +67,8 @@ bot.on('message', msg => {
         console.log(e.toString())
         msg.reply('`' + e.toString() + '`')
       }
+    } else if (msg.content.startsWith('!dance') || msg.content.startsWith('!dancing')) {
+      msg.channel.send('*dances vigorously*')
     }
   } catch (e) {
     console.log(e.toString())
