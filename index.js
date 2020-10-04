@@ -1,12 +1,15 @@
 require('dotenv').config();
 const Discord = require('discord.js');
 const Fight = require ('./Fight').fight;
+const Spacebattle = require('./Spacebattle').Spacebattle
 const bot = new Discord.Client();
 const TOKEN = process.env.TOKEN;
 
 bot.login(TOKEN);
 
 const fight = new Fight([], 1);
+const spaceBattle = new Spacebattle()
+spaceBattle.createAlienFleet(5)
 
 bot.on('ready', () => {
   console.info(`Logged in as ${bot.user.tag}!`);
@@ -69,6 +72,18 @@ bot.on('message', msg => {
       }
     } else if (msg.content.startsWith('!dance') || msg.content.startsWith('!dancing')) {
       msg.channel.send('*dances vigorously*')
+    } else if (msg.content.startsWith('!spacebattle')) {
+      if (msg.content.includes('create ship')) {
+        console.log('create ship')
+        return msg.channel.send(embedFormatter(msg, spaceBattle.createShip(msg)))
+      } else if (msg.content.includes('fight')) {
+        console.log('fight')
+        spaceBattle.battle(msg)
+      } else {
+        console.log('get status')
+        msg.channel.send(embedFormatter(msg, spaceBattle.getStatus(msg)))
+        msg.channel.send(`${spaceBattle.alienShips.length} Alien ships are left`)
+      }
     }
   } catch (e) {
     console.log(e.toString())
@@ -76,3 +91,68 @@ bot.on('message', msg => {
   }
   
 });
+
+function embedFormatter(msg, ship) {
+  // console.log(msg, ship)
+  // const embed = new Discord.MessageEmbed(msg, ship)
+  // .setTitle(ship.name)
+  // .setDescription("A Sturdy ship")
+  // .setImage("https://static.turbosquid.com/Preview/2019/03/30__02_33_41/athena_signature2_1480x800.jpg06030FA6-FD3D-4565-B9FE-2AE4196349FADefaultHQ.jpg")
+  // .setThumbnail("https://static.turbosquid.com/Preview/2019/03/30__02_33_41/athena_signature2_1480x800.jpg06030FA6-FD3D-4565-B9FE-2AE4196349FADefaultHQ.jpg")
+  // .addFields({name: 'Hull', value: `${ship.hull}`})
+  // .addFields({name: 'Firepower', value: `${ship.firepower}`})
+  // .addFields({name: 'Accuracy', value: `${ship.accuracy}`})
+  // .addFields({name: 'Firepower', value: `${ship.firepower}`})
+
+  // return embed
+  return {
+      "content": `${ship.name} is on station!`,
+      "embed": {
+        "title": ship.name,
+        "description": "A sturdy ship",
+        "url": "https://discordapp.com",
+        "color": 16562303,
+        "timestamp": "2020-10-04T14:03:30.578Z",
+        "footer": {
+          "icon_url": "https://static.turbosquid.com/Preview/2019/03/30__02_33_41/athena_signature2_1480x800.jpg06030FA6-FD3D-4565-B9FE-2AE4196349FADefaultHQ.jpg",
+          "text": "footer text"
+        },
+        "thumbnail": {
+          "url": "https://static.turbosquid.com/Preview/2019/03/30__02_33_41/athena_signature2_1480x800.jpg06030FA6-FD3D-4565-B9FE-2AE4196349FADefaultHQ.jpg"
+        },
+        "image": {
+          "url": "https://static.turbosquid.com/Preview/2019/03/30__02_33_41/athena_signature2_1480x800.jpg06030FA6-FD3D-4565-B9FE-2AE4196349FADefaultHQ.jpg"
+        },
+        "author": {
+          "name": `${ship.name}`,
+          "url": "https://discordapp.com",
+          "icon_url": "https://cdn.discordapp.com/embed/avatars/0.png"
+        },
+        "fields": [
+          {
+            "name": `Hull strength`,
+            "value": `${ship.hull}`,
+          },
+          {
+            "name": 'Firepower',
+            "value": `${ship.firepower}`,
+          },
+          {
+            "name": "Accuracy",
+            "value": `${ship.accuracy}`,
+            "inline": true
+          },
+          {
+            "name": "Damage Control",
+            "value": `${ship.damageControl}`,
+            "inline": true
+          },
+          {
+            "name": "Kills",
+            "value": `${ship.kills}`,
+            "inline": true
+          }
+        ]
+      }
+    }
+}
