@@ -4,10 +4,11 @@ class Spacebattle {
     constructor() {
         this.playerShips = []
         this.alienShips = []
+        this.playerFleets = []
     }
 
     createShip(msg) {
-        if (this.playerShips.find(ship => ship.name.includes(msg.author))) {
+        if (this.playerShips.length && this.playerShips.find(ship => ship.name.includes(msg.author))) {
             return this.playerShips.find(ship => ship.name.includes(msg.author))
         }
         const ship = new Ship('USS ' + msg.author)
@@ -24,12 +25,60 @@ class Spacebattle {
         console.log(this.alienShips)
     }
 
+    createPlayerFleet(msg) {
+        if (this.playerFleets.length && this.playerFleets.find(fleet => fleet.commander === msg.author)) {
+            return msg.channel.send('You already have a fleet!')
+        }
+        const fleet = new Fleet(msg.author)
+        fleet.addShip(this.playerShips.find(ship => ship.name === msg.author))
+        this.playerFleets.push(fleet)
+        return msg.channel.send(`${msg.author} created a new fleet, type !spacebattle join fleet ${msg.author} to join`)
+    }
+
+    upgradeShip(msg, stat) {
+        const ship = this.playerShips.find(ship => ship.name.includes(msg.author))
+        if (ship && Object.keys(ship).includes(stat) && ship.xp >= 10) {
+            ship[stat]++
+            ship.xp -= 10
+            msg.channel.send(`Ship upgraded`)
+        } else {
+            msg.reply(`Sorry, either you specified no stat to upgrade or you don't have any upgrade points`)
+        }
+        return this.getStatus(msg)
+    }
+
+    fleetBattle(msg) {
+        const fleet = this.playerFleets.find(fleet => fleet.commander === msg.author)
+        if (!fleet) {
+            return msg.channel.send('You are not commanding a fleet')
+        }
+        fleet.ships.forEach(ship => {
+            ship.attack(this.alienShips[0])
+        })
+        if (this.alienShips[0].hull > 0) {
+            this.alienShips[0].attack(fleet.ships[Math.floor(Math.random() * fleet.ships.length)])
+        } else {
+            msg.channel.send(`Alien ship destroyed!  All members of the fleet gain 1 xp`)
+            fleet.ships.forEach(ship => ship.xp++)
+        }
+        for (let i = 0; i < fleet.ships.length; i++) {
+            if (fleet.ships[i].hull < 0) {
+                msg.channel.send(`${fleet.ships[i].name} has taken heavy damage and is forced to leave the fleet!`)
+                delete fleet.ships[i]
+            }
+        }
+    }
+
     battle(msg) {
         if (this.alienShips.length === 0) {
             this.createAlienFleet(5)
             return msg.channel.send('You won!  Generating new alien fleet...')
         }
+        if (!this.playerShips.length || !this.playerShips.find(ship => ship.name.includes(msg.author))) {
+            return msg.reply('You must create a ship first!  try !spacebattle create ship')
+        }
         let playerShip = this.playerShips.find(ship => ship.name.includes(msg.author))
+        let initialHull = playerShip.hull
         let alienShip = this.alienShips[0]
         console.log(playerShip)
         while (playerShip.hull > 0 && alienShip.hull > 0) {
@@ -40,8 +89,9 @@ class Spacebattle {
             }
         }
         playerShip.hull ? this.alienShips.shift() : this.playerShips.splice(this.playerShips.indexOf(ship => ship.name === playerShip.name), 1)
-        playerShip.hull += playerShip.damageControl
+        playerShip.hull = playerShip.hull + playerShip.damageControl > initialHull ? initialHull : playerShip.hull + playerShip.damageControl
         playerShip.kills++
+        playerShip.xp += 5
         return msg.channel.send(playerShip.hull > 0 ? `${playerShip.name} has prevailed!` : `${playerShip.name} has been destroyed!`)
 
     }
@@ -60,6 +110,7 @@ class Ship {
         this.accuracy = accuracy || (Math.floor(Math.random() * 5) + 5) / 10
         this.damageControl = damageControl || Math.floor(Math.random() * 5) + 5
         this.kills = 0
+        this.xp = 0
     }
 
     attack(msg, enemyShip) {
@@ -68,6 +119,22 @@ class Ship {
             return msg.channel.send(`${this.name} hits ${enemyShip.name} for ${this.firepower} damage!`)
         }
         return msg.channel.send(`${this.name} missed!`)
+    }
+}
+
+class Fleet {
+    constructor (commander) {
+        this.commander = commander
+        this.ships = []
+    }
+
+    removeShip(msg) {
+        this.playerShips.splice(this.playerShips.indexOf(ship => ship.name === msg.author), 1)
+        msg.channel.send(`${msg.author}'s ship has left ${this.commander}'s fleet`)
+    }
+
+    addShip(ship) {
+        this.ships.push(ship)
     }
 }
 

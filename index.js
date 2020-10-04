@@ -79,6 +79,8 @@ bot.on('message', msg => {
       } else if (msg.content.includes('fight')) {
         console.log('fight')
         spaceBattle.battle(msg)
+      } else if (msg.content.includes('upgrade')) {
+        spaceBattle.upgradeShip(msg, msg.content.split(' ')[2])
       } else {
         console.log('get status')
         msg.channel.send(embedFormatter(msg, spaceBattle.getStatus(msg)))
@@ -132,6 +134,11 @@ function embedFormatter(msg, ship) {
           {
             "name": `Hull strength`,
             "value": `${ship.hull}`,
+            "inline": true
+          },
+          {
+            name: 'Upgrade Points',
+            value: `${ship.xp / 10}`
           },
           {
             "name": 'Firepower',
